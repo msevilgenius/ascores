@@ -1,0 +1,37 @@
+{
+    "author": "msevilgenius",
+    "dependencies": {},
+    "keywords": [],
+    "name": "ascores",
+    "pebble": {
+        "capabilities": [
+            ""
+        ],
+        "displayName": "AScores",
+        "enableMultiJS": true,
+        "messageKeys": [],
+        "projectType": "native",
+        "resources": {
+            "media": [
+                {
+                    "file": "images/logo_28",
+                    "name": "ICON_28",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/sheet_bg",
+                    "name": "SHEET_BG",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                }
+            ]
+        },
+        "sdkVersion": "3",
+        "uuid": "0d25ac9b-8e5b-4b28-b5b0-466aff3e6660",
+        "watchapp": {
+            "watchface": false
+        }
+    },
+    "version": "1.0.0"
+}
