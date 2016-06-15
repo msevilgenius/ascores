@@ -1,34 +1,23 @@
-#include "main_window.h"
-#include "setup.h"
+#include "round_select.h"
+#include "res/rounds.h"
 #include "strings.h"
 
-static Window *s_main_window;
+static Window *s_rsel_window;
 static MenuLayer *s_menu_layer;
 static StatusBarLayer *status_bar;
 
-static bool can_resume() {
-    return true;
-}
 
 static uint16_t menu_get_num_sections_cb(MenuLayer *ml, void *data) {
     return 1;
 }
 
 static uint16_t menu_get_num_rows_cb(MenuLayer *ml, uint16_t section, void *data) {
-    return 1 + (can_resume() ? 1 : 0);
+    return 1;
 }
 
 static void menu_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
-    
+
     switch (cell_index->row){
-        case 0:
-            // new
-            menu_cell_title_draw(ctx, cell_layer, MAIN_NEW);
-            break;
-        case 1:
-            // resume
-            menu_cell_basic_draw(ctx, cell_layer, MAIN_RESUME, "current_progress", NULL);
-            break;
     }
     
 }
@@ -36,17 +25,10 @@ static void menu_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *
 static void menu_select_cb(MenuLayer *ml, MenuIndex *cell_index, void *data) {
     
     switch (cell_index->row){
-        case 0:
-            // new - to screen setup
-            setup_init();
-            break;
-        case 1:
-            // resume - to score_entry (resume)
-            break;
     }
 }
 
-static void main_window_load(Window *window) {
+static void rsel_window_load(Window *window) {
     Layer *window_layer = window_get_root_layer(window);
     
     status_bar = status_bar_layer_create();
@@ -68,23 +50,21 @@ static void main_window_load(Window *window) {
     layer_add_child(window_layer, menu_layer_get_layer(s_menu_layer));
 }
 
-static void main_window_unload(Window *window) {
+static void rsel_window_unload(Window *window) {
     menu_layer_destroy(s_menu_layer);
 }
 
-void main_init() {
-    s_main_window = window_create();
+void rsel_init() {
+    s_rsel_window = window_create();
 
-    window_set_window_handlers(s_main_window, (WindowHandlers) {
-        .load = main_window_load,
-        .unload = main_window_unload
+    window_set_window_handlers(s_rsel_window, (WindowHandlers) {
+        .load = rsel_window_load,
+        .unload = rsel_window_unload
     });
 
-    window_stack_push(s_main_window, true);
+    window_stack_push(s_rsel_window, true);
 }
 
-void main_deinit() {
-    window_destroy(s_main_window);
+void rsel_deinit() {
+    window_destroy(s_rsel_window);
 }
-
-
