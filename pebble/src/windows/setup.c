@@ -2,6 +2,7 @@
 #include "round_select.h"
 #include "res/rounds.h"
 #include "strings.h"
+#include "number_select.h"
 
 static Window *s_setup_window;
 static MenuLayer *s_menu_layer;
@@ -9,13 +10,22 @@ static StatusBarLayer *status_bar;
 
 static struct round_data s_round;
 
+static void set_round_ends(uint16_t num, void *arg) {
+    s_round.ends = num;
+    menu_layer_reload_data(s_menu_layer);
+}
+
+static void set_round_ape(uint16_t num, void *arg) {
+    s_round.arrows_per_end = num;
+    menu_layer_reload_data(s_menu_layer);
+}
 
 static uint16_t menu_get_num_sections_cb(MenuLayer *ml, void *data) {
     return 1;
 }
 
 static uint16_t menu_get_num_rows_cb(MenuLayer *ml, uint16_t section, void *data) {
-    return 4;
+    return 5;
 }
 
 static void menu_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
@@ -42,6 +52,9 @@ static void menu_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *
             snprintf(buf, 8, "%d-zone", (s_round.imperial ? 5 : 10));
             menu_cell_basic_draw(ctx, cell_layer, SETUP_SZONES, buf, NULL);
             break;
+        case 4:
+            menu_cell_basic_draw(ctx, cell_layer, SETUP_START, NULL, NULL);
+            break;
     }
     
 }
@@ -54,9 +67,15 @@ static void menu_select_cb(MenuLayer *ml, MenuIndex *cell_index, void *data) {
             break;
         case 1:
             // ApE
+            numsel_create(s_round.arrows_per_end, 1, 12, "Arrows/End");
+            numsel_set_done_callback(set_round_ape, NULL);
+            numsel_push();
             break;
         case 2:
             // Ends
+            numsel_create(s_round.ends, 1, 100, "Ends");
+            numsel_set_done_callback(set_round_ends, NULL);
+            numsel_push();
             break;
         case 3:
             // Scoring Zones
@@ -64,10 +83,13 @@ static void menu_select_cb(MenuLayer *ml, MenuIndex *cell_index, void *data) {
             s_round.imperial = !s_round.imperial;
             // TODO change name to int type andget names from storage, 0 = custom 
             //s_round.name = "Custom"
+            menu_layer_reload_data(ml);
+            break;
+        case 4:
+            // start
             break;
     }
 
-    menu_layer_reload_data(ml);
 
 }
 

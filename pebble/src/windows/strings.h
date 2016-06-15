@@ -7,5 +7,6 @@
 #define SETUP_APE "Arrows per End"
 #define SETUP_ENDS "Ends"
 #define SETUP_SZONES "Scoring"
+#define SETUP_START "Start"
 
 
