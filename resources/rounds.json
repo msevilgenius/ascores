@@ -1,0 +1,259 @@
+{
+    "categories":[
+        {
+            "name": "Imperial 12",
+            "rounds": [
+{
+    "name": "York",
+    "imperial": true,
+    "hdozens": 24,
+    "ends": 24,
+    "arrows_per_end": 6
+},
+{
+    "name": "Hereford/Bristol I",
+    "imperial": true,
+    "hdozens": 24,
+    "ends": 24,
+    "arrows_per_end": 6
+},
+{
+    "name": "Bristol II",
+    "imperial": true,
+    "hdozens": 24,
+    "ends": 24,
+    "arrows_per_end": 6
+},
+{
+    "name": "Bristol III",
+    "imperial": true,
+    "hdozens": 24,
+    "ends": 24,
+    "arrows_per_end": 6
+},
+{
+    "name": "Bristol IV",
+    "imperial": true,
+    "hdozens": 24,
+    "ends": 24,
+    "arrows_per_end": 6
+},
+{
+    "name": "Bristol V",
+    "imperial": true,
+    "hdozens": 24,
+    "ends": 24,
+    "arrows_per_end": 6
+}
+            ]
+        },
+        {
+            "name": "Imperial  9",
+            "rounds": [
+{
+    "name": "St. George",
+    "imperial": true,
+    "hdozens": 18,
+    "ends": 18,
+    "arrows_per_end": 6
+},
+{
+    "name": "Albion",
+    "imperial": true,
+    "hdozens": 18,
+    "ends": 18,
+    "arrows_per_end": 6
+},
+{
+    "name": "Windsor",
+    "imperial": true,
+    "hdozens": 18,
+    "ends": 18,
+    "arrows_per_end": 6
+},
+{
+    "name": "Short Windsor",
+    "imperial": true,
+    "hdozens": 18,
+    "ends": 18,
+    "arrows_per_end": 6
+},
+{
+    "name": "Junior Windsor",
+    "imperial": true,
+    "hdozens": 18,
+    "ends": 18,
+    "arrows_per_end": 6
+},
+{
+    "name": "Short Junior Windsor",
+    "imperial": true,
+    "hdozens": 18,
+    "ends": 18,
+    "arrows_per_end": 6
+}
+            ]
+        },
+        {
+            "name": "Imperial  8",
+            "rounds": [
+{
+    "name": "New Western",
+    "imperial": true,
+    "hdozens": 16,
+    "ends": 16,
+    "arrows_per_end": 6
+},
+{
+    "name": "Long Western",
+    "imperial": true,
+    "hdozens": 16,
+    "ends": 16,
+    "arrows_per_end": 6
+},
+{
+    "name": "Western",
+    "imperial": true,
+    "hdozens": 16,
+    "ends": 16,
+    "arrows_per_end": 6
+},
+{
+    "name": "Short Western",
+    "imperial": true,
+    "hdozens": 16,
+    "ends": 16,
+    "arrows_per_end": 6
+},
+{
+    "name": "Junior Western",
+    "imperial": true,
+    "hdozens": 16,
+    "ends": 16,
+    "arrows_per_end": 6
+},
+{
+    "name": "Short Junior Western",
+    "imperial": true,
+    "hdozens": 16,
+    "ends": 16,
+    "arrows_per_end": 6
+}
+            ]
+        },
+        {
+            "name": "Imperial  7",
+            "rounds": [
+{
+    "name": "American",
+    "imperial": true,
+    "hdozens": 15,
+    "ends": 15,
+    "arrows_per_end": 6
+},
+{
+    "name": "St. Nicholas",
+    "imperial": true,
+    "hdozens": 14,
+    "ends": 14,
+    "arrows_per_end": 6
+}
+            ]
+        },
+        {
+            "name": "Imperial  6",
+            "rounds": [
+{
+    "name": "New National",
+    "imperial": true,
+    "hdozens": 12,
+    "ends": 12,
+    "arrows_per_end": 6
+},
+{
+    "name": "Long National",
+    "imperial": true,
+    "hdozens": 12,
+    "ends": 12,
+    "arrows_per_end": 6
+},
+{
+    "name": "National",
+    "imperial": true,
+    "hdozens": 12,
+    "ends": 12,
+    "arrows_per_end": 6
+},
+{
+    "name": "Short National",
+    "imperial": true,
+    "hdozens": 12,
+    "ends": 12,
+    "arrows_per_end": 6
+},
+{
+    "name": "Junior National",
+    "imperial": true,
+    "hdozens": 12,
+    "ends": 12,
+    "arrows_per_end": 6
+},
+{
+    "name": "Short Junior National",
+    "imperial": true,
+    "hdozens": 12,
+    "ends": 12,
+    "arrows_per_end": 6
+}
+            ]
+        },
+        {
+            "name": "Imperial  4",
+            "rounds": [
+{
+    "name": "New Warwick",
+    "imperial": true,
+    "hdozens": 8,
+    "ends": 8,
+    "arrows_per_end": 6
+},
+{
+    "name": "Long Warwick",
+    "imperial": true,
+    "hdozens": 8,
+    "ends": 8,
+    "arrows_per_end": 6
+},
+{
+    "name": "Warwick",
+    "imperial": true,
+    "hdozens": 8,
+    "ends": 8,
+    "arrows_per_end": 6
+},
+{
+    "name": "Short Warwick",
+    "imperial": true,
+    "hdozens": 8,
+    "ends": 8,
+    "arrows_per_end": 6
+},
+{
+    "name": "Junior Warwick",
+    "imperial": true,
+    "hdozens": 8,
+    "ends": 8,
+    "arrows_per_end": 6
+},
+{
+    "name": "Short Junior Warwick",
+    "imperial": true,
+    "hdozens": 8,
+    "ends": 8,
+    "arrows_per_end": 6
+}
+            ]
+        }
+    ]
+}
+
