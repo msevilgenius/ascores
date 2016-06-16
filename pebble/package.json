@@ -24,6 +24,36 @@
                     "name": "SHEET_BG",
                     "targetPlatforms": null,
                     "type": "bitmap"
+                },
+                {
+                    "file": "images/score_entry_3_bg.png",
+                    "type": "bitmap",
+                    "name": "IMG_SCORE_BG"
+                },
+                {
+                    "file": "images/arrow_up.png",
+                    "type": "bitmap",
+                    "name": "IMG_ARROW_UP"
+                },
+                {
+                    "file": "images/arrow_down.png",
+                    "type": "bitmap",
+                    "name": "IMG_ARROW_DN"
+                },
+                {
+                    "file": "images/arrow_up_outer.png",
+                    "type": "bitmap",
+                    "name": "IMG_ARROW_UP_OUTER"
+                },
+                {
+                    "file": "images/arrow_down_outer.png",
+                    "type": "bitmap",
+                    "name": "IMG_ARROW_DN_OUTER"
+                },
+                {
+                    "file": "images/box_outer.png",
+                    "type": "bitmap",
+                    "name": "IMG_BOX_OUTER"
                 }
             ]
         },

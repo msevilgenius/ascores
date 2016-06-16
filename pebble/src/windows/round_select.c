@@ -1,7 +1,7 @@
 #include "round_select.h"
 #include "res/rounds.h"
 #include "strings.h"
-#include "modules/storage"
+#include "modules/storage.h"
 
 static Window *s_rsel_window;
 static MenuLayer *s_menu_layer;
@@ -16,13 +16,19 @@ static uint16_t menu_get_num_rows_cb(MenuLayer *ml, uint16_t section, void *data
     return 1;
 }
 
+// menu will display rounds wich have been setup in app
+// if cant connect to phone, load from storage
+// if none in storage show message to say 'get predefined rounds from app'
+ 
 static void menu_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
 
     switch (cell_index->row){
         case 0:
             // custom
+            break;
         default:
             // get from storage or w/e
+            return;
     }
     
 }
@@ -32,6 +38,7 @@ static void menu_select_cb(MenuLayer *ml, MenuIndex *cell_index, void *data) {
     switch (cell_index->row){
         case 0:
             // nothing I guess
+            break;
     }
 }
 

@@ -3,12 +3,13 @@
 #include "res/rounds.h"
 #include "strings.h"
 #include "number_select.h"
+#include "score_entry.h"
 
 static Window *s_setup_window;
 static MenuLayer *s_menu_layer;
 static StatusBarLayer *status_bar;
 
-static struct round_data s_round;
+static RoundData s_round;
 
 static uint8_t max_ends() {
     uint8_t ends = 255 / s_round.arrows_per_end;
@@ -98,6 +99,7 @@ static void menu_select_cb(MenuLayer *ml, MenuIndex *cell_index, void *data) {
             break;
         case 4:
             // start
+            score_entry_create(&s_round);
             break;
     }
 
