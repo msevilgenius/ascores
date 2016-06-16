@@ -10,6 +10,14 @@ static StatusBarLayer *status_bar;
 
 static struct round_data s_round;
 
+static uint8_t max_ends() {
+    uint8_t ends = 255 / s_round.arrows_per_end;
+    if (ends > MAX_ENDS){
+        ends = MAX_ENDS;
+    }
+    return ends;
+}
+
 static void set_round_ends(uint16_t num, void *arg) {
     s_round.ends = num;
     menu_layer_reload_data(s_menu_layer);
@@ -17,6 +25,9 @@ static void set_round_ends(uint16_t num, void *arg) {
 
 static void set_round_ape(uint16_t num, void *arg) {
     s_round.arrows_per_end = num;
+    if (s_round.ends > max_ends()){
+        s_round.ends = max_ends();
+    }
     menu_layer_reload_data(s_menu_layer);
 }
 
@@ -73,7 +84,7 @@ static void menu_select_cb(MenuLayer *ml, MenuIndex *cell_index, void *data) {
             break;
         case 2:
             // Ends
-            numsel_create(s_round.ends, 1, 100, "Ends");
+            numsel_create(s_round.ends, 1, max_ends(), "Ends");
             numsel_set_done_callback(set_round_ends, NULL);
             numsel_push();
             break;
