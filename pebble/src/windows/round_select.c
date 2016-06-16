@@ -1,6 +1,7 @@
 #include "round_select.h"
 #include "res/rounds.h"
 #include "strings.h"
+#include "modules/storage"
 
 static Window *s_rsel_window;
 static MenuLayer *s_menu_layer;
@@ -18,6 +19,10 @@ static uint16_t menu_get_num_rows_cb(MenuLayer *ml, uint16_t section, void *data
 static void menu_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
 
     switch (cell_index->row){
+        case 0:
+            // custom
+        default:
+            // get from storage or w/e
     }
     
 }
@@ -25,6 +30,8 @@ static void menu_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *
 static void menu_select_cb(MenuLayer *ml, MenuIndex *cell_index, void *data) {
     
     switch (cell_index->row){
+        case 0:
+            // nothing I guess
     }
 }
 

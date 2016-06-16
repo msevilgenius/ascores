@@ -1,0 +1,8 @@
+#define PS_CURR_SCORES 0
+#define PS_CURR_ROUND  1
+#define PS_ROUNDS_TABLE 2
+
+#define PS_PAST_SCORES_TABLE_START 5
+#define PS_PAST_SCORES_TABLE_LENGTH 6
+
+// 11+ are free
