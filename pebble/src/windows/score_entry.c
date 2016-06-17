@@ -49,19 +49,30 @@ static const char* score2str(uint8_t score) {
 			return "-";
 	}
 }
-
+/* why would you turn on -Werror
 static uint8_t dat2score(uint8_t dat){
-	if (score == (10 & 0b10000000)){
+	if (dat == (10 & 0b10000000)){
 		return 11;
 	}
 	return dat;
 }
-
+*/
 static uint8_t score2dat(uint8_t score){
 	if (score == 11){
 		return 10 & 0b10000000;
 	}
 	return score;
+}
+
+static void update_current_score_entry_text() {
+	text_layer_set_text(num_entry_layer[arrow_in_end % 3], score2str(end_scores[arrow_in_end]));
+}
+
+static void clear_score_entry_text() {
+	// fuck looping for this
+	text_layer_set_text(num_entry_layer[0], score2str(end_scores[0]));
+	text_layer_set_text(num_entry_layer[1], score2str(end_scores[1]));
+	text_layer_set_text(num_entry_layer[2], score2str(end_scores[2]));
 }
 
 static void button_up_handler(ClickRecognizerRef recognizer, void *ctx) {
@@ -72,6 +83,7 @@ static void button_up_handler(ClickRecognizerRef recognizer, void *ctx) {
 	}else if(end_scores[arrow_in_end] < 8){ // imperial && score = [1357]
 		end_scores[arrow_in_end] += 2;
 	}
+	update_current_score_entry_text();
 }
 
 static void button_dn_handler(ClickRecognizerRef recognizer, void *ctx) {
@@ -80,8 +92,9 @@ static void button_dn_handler(ClickRecognizerRef recognizer, void *ctx) {
 	}else if(end_scores[arrow_in_end] > 2){ // imperial && score = [3579]
 		end_scores[arrow_in_end] -= 2;
 	}else if(end_scores[arrow_in_end] > 0){ // imperial && score = 1
-		end_scores[arrow_in_end] = 0
+		end_scores[arrow_in_end] = 0;
 	}
+	update_current_score_entry_text();
 }
 
 static void button_select_handler(ClickRecognizerRef recognizer, void *ctx) {
@@ -91,8 +104,8 @@ static void button_select_handler(ClickRecognizerRef recognizer, void *ctx) {
 		// TODO save scores to storage
 		// commit end scores and reset
 		for (uint8_t i = 0; i < round_data->arrows_per_end; ++i){
-			scores[ (curr_end*round_data->arrows_per_end) + i] = end_scores[i];
-			end_scores[i] = 0xFF;
+			scores[ (curr_end*round_data->arrows_per_end) + i] = score2dat(end_scores[i]);
+			end_scores[i] = 0x80;
 		}
 		if (++curr_end >= round_data->ends){
 			// finished shoot
@@ -101,10 +114,16 @@ static void button_select_handler(ClickRecognizerRef recognizer, void *ctx) {
 			// starting next end, set first score to highest
 			// FUTURE_TODO set to ave. first arrow?
 			end_scores[0] = round_data->imperial ? 9 : 10;
+			clear_score_entry_text();
 		}
 	}else{ // just move on to nex arrow
 		// set next score to prev score (as it should only ever by <= to it)
 		end_scores[arrow_in_end] = end_scores[arrow_in_end - 1];
+		if (arrow_in_end % 3 == 0){
+			clear_score_entry_text();
+		}else{
+			update_current_score_entry_text();
+		}
 	}
 }
 
@@ -159,7 +178,6 @@ static void window_load(Window* window) {
 	    text_layer_set_text_color(num_entry_layer[i], GColorBlack);
 	    text_layer_set_font(num_entry_layer[i], fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
 	    text_layer_set_text_alignment(num_entry_layer[i], GTextAlignmentCenter);
-	    text_layer_set_text(num_entry_layer[i], "10");
 	
 	    layer_add_child(window_layer, text_layer_get_layer(num_entry_layer[i]));
 	}
@@ -172,7 +190,7 @@ static void window_load(Window* window) {
     text_layer_set_font(progress_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18));
     text_layer_set_text_alignment(progress_text_layer,
 		PBL_IF_ROUND_ELSE(GTextAlignmentCenter, GTextAlignmentRight));
-    text_layer_set_text(progress_text_layer, "Arrow 1/3    End: 1/12");
+    text_layer_set_text(progress_text_layer, "Arrow 1/3\nEnd:  1/12");
 
     layer_add_child(window_layer, text_layer_get_layer(progress_text_layer));
 	
@@ -181,6 +199,9 @@ static void window_load(Window* window) {
 	
 	
 	window_set_click_config_provider(score_entry_window, (ClickConfigProvider) config_provider);
+
+	clear_score_entry_text();
+	update_current_score_entry_text();
 }
 
 static void window_unload(Window* window) {
@@ -206,12 +227,17 @@ static void window_unload(Window* window) {
 }
 
 void score_entry_create (RoundData *round) {
+	// TODO going back, then changing a setting, then going back and then resuming could fuck up the round data?
 	round_data = round;
 	// save round to storage
 	scores = malloc(sizeof(uint8_t) * round_data->ends * round_data->arrows_per_end);
 	end_scores = malloc(sizeof(uint8_t) * round_data->arrows_per_end);
 	arrow_in_end = 0;
 	curr_end = 0;
+	end_scores[0] = round_data->imperial ? 9 : 10;
+	for (uint8_t i = 1; i < round_data->arrows_per_end; ++i){
+		end_scores[i] = 0x80;
+	}
 	
 	score_entry_window = window_create();
 
