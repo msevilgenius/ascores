@@ -64,15 +64,23 @@ static uint8_t score2dat(uint8_t score){
 	return score;
 }
 
+static void update_progress_text() {
+	static char buf[28];
+	snprintf(buf, 28, "Arrow: %u/%u\nEnd: %u/%u",
+				arrow_in_end + 1, (round_data->arrows_per_end),
+				curr_end + 1, (round_data->ends));
+    text_layer_set_text(progress_text_layer, buf);
+}
+
 static void update_current_score_entry_text() {
 	text_layer_set_text(num_entry_layer[arrow_in_end % 3], score2str(end_scores[arrow_in_end]));
 }
 
 static void clear_score_entry_text() {
 	// fuck looping for this
-	text_layer_set_text(num_entry_layer[0], score2str(end_scores[0]));
-	text_layer_set_text(num_entry_layer[1], score2str(end_scores[1]));
-	text_layer_set_text(num_entry_layer[2], score2str(end_scores[2]));
+	text_layer_set_text(num_entry_layer[0], "-");
+	text_layer_set_text(num_entry_layer[1], "-");
+	text_layer_set_text(num_entry_layer[2], "-");
 }
 
 static void button_up_handler(ClickRecognizerRef recognizer, void *ctx) {
@@ -109,22 +117,23 @@ static void button_select_handler(ClickRecognizerRef recognizer, void *ctx) {
 		}
 		if (++curr_end >= round_data->ends){
 			// finished shoot
-			// TODO send score to phone, close scoresheet, etc.
+			// TODO send score to phone, close scoresheet, etc. otherwise this can crash
 		}else{
 			// starting next end, set first score to highest
 			// FUTURE_TODO set to ave. first arrow?
 			end_scores[0] = round_data->imperial ? 9 : 10;
 			clear_score_entry_text();
+			update_current_score_entry_text();
 		}
 	}else{ // just move on to nex arrow
 		// set next score to prev score (as it should only ever by <= to it)
 		end_scores[arrow_in_end] = end_scores[arrow_in_end - 1];
 		if (arrow_in_end % 3 == 0){
 			clear_score_entry_text();
-		}else{
-			update_current_score_entry_text();
 		}
+		update_current_score_entry_text();
 	}
+	update_progress_text();
 }
 
 static void config_provider(Window *window) {
@@ -190,7 +199,7 @@ static void window_load(Window* window) {
     text_layer_set_font(progress_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18));
     text_layer_set_text_alignment(progress_text_layer,
 		PBL_IF_ROUND_ELSE(GTextAlignmentCenter, GTextAlignmentRight));
-    text_layer_set_text(progress_text_layer, "Arrow 1/3\nEnd:  1/12");
+    update_progress_text();
 
     layer_add_child(window_layer, text_layer_get_layer(progress_text_layer));
 	
