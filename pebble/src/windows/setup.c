@@ -79,7 +79,7 @@ static void menu_select_cb(MenuLayer *ml, MenuIndex *cell_index, void *data) {
             break;
         case 1:
             // ApE
-            numsel_create(s_round.arrows_per_end, 1, 12, "Arrows/End");
+            numsel_create(s_round.arrows_per_end, 3, 6, "Arrows/End");
             numsel_set_done_callback(set_round_ape, NULL);
             numsel_push();
             break;
