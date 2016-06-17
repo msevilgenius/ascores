@@ -4,6 +4,8 @@
 static Window *s_numsel_window;
 static TextLayer *text_number;
 static TextLayer *text_title;
+static ActionBarLayer *action_bar;
+static GBitmap *bitmap_plus, *bitmap_minus, *bitmap_tick;
 
 static numsel_found_number_callback num_cb;
 static void *cb_arg;
@@ -53,6 +55,19 @@ static void numsel_window_load(Window *window) {
     
     Layer *window_layer = window_get_root_layer(window);
     GRect bounds = layer_get_bounds(window_layer);
+    bounds.size.w -= ACTION_BAR_WIDTH;
+    
+    bitmap_plus = gbitmap_create_with_resource(RESOURCE_ID_IMG_PLUS_16);
+    bitmap_minus = gbitmap_create_with_resource(RESOURCE_ID_IMG_MINUS_16);
+    bitmap_tick = gbitmap_create_with_resource(RESOURCE_ID_IMG_TICK_16);
+    
+    action_bar = action_bar_layer_create();
+    action_bar_layer_add_to_window(action_bar, window);
+    action_bar_layer_set_click_config_provider(action_bar,
+                                (ClickConfigProvider) config_provider);
+    action_bar_layer_set_icon_animated(action_bar, BUTTON_ID_UP, bitmap_plus, true);
+    action_bar_layer_set_icon_animated(action_bar, BUTTON_ID_DOWN, bitmap_minus, true);
+    action_bar_layer_set_icon_animated(action_bar, BUTTON_ID_SELECT, bitmap_tick, true);
 
     text_title = text_layer_create(
         GRect(0, PBL_IF_ROUND_ELSE(28, 22), bounds.size.w, 48));
@@ -82,6 +97,10 @@ static void numsel_window_load(Window *window) {
 static void numsel_window_unload(Window *window) {
     text_layer_destroy(text_title);
     text_layer_destroy(text_number);
+    
+    gbitmap_destroy(bitmap_plus);
+    gbitmap_destroy(bitmap_minus);
+    gbitmap_destroy(bitmap_tick);
 }
 
 void numsel_create(uint16_t init_num, uint16_t min, uint16_t max, const char *title) {
@@ -98,8 +117,6 @@ void numsel_create(uint16_t init_num, uint16_t min, uint16_t max, const char *ti
         .load = numsel_window_load,
         .unload = numsel_window_unload
     });
-    
-    window_set_click_config_provider(s_numsel_window, (ClickConfigProvider) config_provider);
 
 }
 

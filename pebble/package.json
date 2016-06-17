@@ -54,6 +54,21 @@
                     "file": "images/box_outer.png",
                     "type": "bitmap",
                     "name": "IMG_BOX_OUTER"
+                },
+                {
+                    "file": "images/plus_16.png",
+                    "type": "bitmap",
+                    "name": "IMG_PLUS_16"
+                },
+                {
+                    "file": "images/minus_16_s.png",
+                    "type": "bitmap",
+                    "name": "IMG_MINUS_16"
+                },
+                {
+                    "file": "images/tick_16.png",
+                    "type": "bitmap",
+                    "name": "IMG_TICK_16"
                 }
             ]
         },
