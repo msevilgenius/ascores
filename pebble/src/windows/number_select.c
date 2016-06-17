@@ -24,17 +24,21 @@ void update_number_display() {
 }
     
 void button_up_handler(ClickRecognizerRef recognizer, void *ctx) {
-    if (number < num_max) {
-        ++number;
+    if (++number >= num_max) {
+        number = num_max;
+        action_bar_layer_clear_icon(action_bar, BUTTON_ID_UP);
     }
+    action_bar_layer_set_icon_animated(action_bar, BUTTON_ID_DOWN, bitmap_minus, true);
     update_number_display();
     APP_LOG(APP_LOG_LEVEL_INFO, "incr");
 }
 
 void button_dn_handler(ClickRecognizerRef recognizer, void *ctx) {
-    if (number > num_min) {
-        --number;
+    if (--number <= num_min) {
+        number = num_min;
+        action_bar_layer_clear_icon(action_bar, BUTTON_ID_DOWN);
     }
+    action_bar_layer_set_icon_animated(action_bar, BUTTON_ID_UP, bitmap_plus, true);
     update_number_display();
     APP_LOG(APP_LOG_LEVEL_INFO, "decr");
 }
@@ -65,8 +69,10 @@ static void numsel_window_load(Window *window) {
     action_bar_layer_add_to_window(action_bar, window);
     action_bar_layer_set_click_config_provider(action_bar,
                                 (ClickConfigProvider) config_provider);
-    action_bar_layer_set_icon_animated(action_bar, BUTTON_ID_UP, bitmap_plus, true);
-    action_bar_layer_set_icon_animated(action_bar, BUTTON_ID_DOWN, bitmap_minus, true);
+    if (number < num_max)
+        action_bar_layer_set_icon_animated(action_bar, BUTTON_ID_UP, bitmap_plus, true);
+    if (number > num_min)
+        action_bar_layer_set_icon_animated(action_bar, BUTTON_ID_DOWN, bitmap_minus, true);
     action_bar_layer_set_icon_animated(action_bar, BUTTON_ID_SELECT, bitmap_tick, true);
 
     text_title = text_layer_create(
