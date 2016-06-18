@@ -76,6 +76,29 @@ static void update_current_score_entry_text() {
 	text_layer_set_text(num_entry_layer[arrow_in_end % 3], score2str(end_scores[arrow_in_end]));
 }
 
+static void move_selection_box_animation_end(Animation *animation, bool finished, void *ctx) {
+	animation_destroy(animation);
+}
+
+static void move_selection_box_animated(uint8_t from_pos, uint8_t to_pos) {
+
+	const int duration_ms = 200;
+	GRect start, finish;
+	start = GRect(10 + from_pos * 41, 93, 42, 60);
+	finish = GRect(10 + to_pos * 41, 93, 42, 60);
+	
+	PropertyAnimation *prop_anim = property_animation_create_layer_frame(selection_layer,
+																		&start, &finish);
+	Animation *anim = property_animation_get_animation(prop_anim);
+	
+	animation_set_duration(anim, duration_ms);
+	animation_set_handlers(anim,(AnimationHandlers) {
+		.stopped = move_selection_box_animation_end
+	}, NULL);
+	
+	animation_schedule(anim);
+}
+
 static void clear_score_entry_text() {
 	// fuck looping for this
 	text_layer_set_text(num_entry_layer[0], "-");
@@ -106,6 +129,7 @@ static void button_dn_handler(ClickRecognizerRef recognizer, void *ctx) {
 }
 
 static void button_select_handler(ClickRecognizerRef recognizer, void *ctx) {
+	uint8_t prev_arrow_in_end = arrow_in_end;
 	if (++arrow_in_end >= round_data->arrows_per_end){
 		// finished end
 		arrow_in_end = 0;
@@ -125,7 +149,7 @@ static void button_select_handler(ClickRecognizerRef recognizer, void *ctx) {
 			clear_score_entry_text();
 			update_current_score_entry_text();
 		}
-	}else{ // just move on to nex arrow
+	}else{ // just move on to next arrow
 		// set next score to prev score (as it should only ever by <= to it)
 		end_scores[arrow_in_end] = end_scores[arrow_in_end - 1];
 		if (arrow_in_end % 3 == 0){
@@ -134,6 +158,7 @@ static void button_select_handler(ClickRecognizerRef recognizer, void *ctx) {
 		update_current_score_entry_text();
 	}
 	update_progress_text();
+	move_selection_box_animated(prev_arrow_in_end % 3, arrow_in_end % 3);
 }
 
 static void config_provider(Window *window) {
