@@ -30,7 +30,6 @@ void button_up_handler(ClickRecognizerRef recognizer, void *ctx) {
     }
     action_bar_layer_set_icon_animated(action_bar, BUTTON_ID_DOWN, bitmap_minus, true);
     update_number_display();
-    APP_LOG(APP_LOG_LEVEL_INFO, "incr");
 }
 
 void button_dn_handler(ClickRecognizerRef recognizer, void *ctx) {
@@ -40,13 +39,11 @@ void button_dn_handler(ClickRecognizerRef recognizer, void *ctx) {
     }
     action_bar_layer_set_icon_animated(action_bar, BUTTON_ID_UP, bitmap_plus, true);
     update_number_display();
-    APP_LOG(APP_LOG_LEVEL_INFO, "decr");
 }
 
 void button_select_handler(ClickRecognizerRef recognizer, void *ctx) {
     numsel_destroy();
     num_cb(number, cb_arg);
-    APP_LOG(APP_LOG_LEVEL_INFO, "select");
 }
 
 void config_provider(Window *window) {

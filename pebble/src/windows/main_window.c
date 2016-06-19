@@ -1,13 +1,15 @@
 #include "main_window.h"
 #include "setup.h"
+#include "score_entry.h"
 #include "strings.h"
+#include "modules/storage.h"
 
 static Window *s_main_window;
 static MenuLayer *s_menu_layer;
 static StatusBarLayer *status_bar;
 
 static bool can_resume() {
-    return true;
+    return storage_has_curr_round();
 }
 
 static uint16_t menu_get_num_sections_cb(MenuLayer *ml, void *data) {
@@ -19,29 +21,31 @@ static uint16_t menu_get_num_rows_cb(MenuLayer *ml, uint16_t section, void *data
 }
 
 static void menu_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
-    
-    switch (cell_index->row){
+    uint8_t row = cell_index->row + (can_resume() ? 0 : 1);
+    switch (row){
         case 0:
-            // new
-            menu_cell_title_draw(ctx, cell_layer, MAIN_NEW);
-            break;
-        case 1:
             // resume
             menu_cell_basic_draw(ctx, cell_layer, MAIN_RESUME, "current_progress", NULL);
+            break;
+        case 1:
+            // new
+            menu_cell_title_draw(ctx, cell_layer, MAIN_NEW);
             break;
     }
     
 }
 
 static void menu_select_cb(MenuLayer *ml, MenuIndex *cell_index, void *data) {
-    
-    switch (cell_index->row){
+    uint8_t row = cell_index->row + (can_resume() ? 0 : 1);
+    switch (row){
         case 0:
-            // new - to screen setup
-            setup_init();
+            // resume - to score_entry (resume)
+            APP_LOG(APP_LOG_LEVEL_INFO, "resume clicked");
+            score_entry_resume();
             break;
         case 1:
-            // resume - to score_entry (resume)
+            // new - to screen setup
+            setup_init();
             break;
     }
 }

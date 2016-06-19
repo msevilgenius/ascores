@@ -1,6 +1,7 @@
 #include "setup.h"
 #include "round_select.h"
 #include "res/rounds.h"
+#include "modules/storage.h"
 #include "strings.h"
 #include "number_select.h"
 #include "score_entry.h"
@@ -99,6 +100,8 @@ static void menu_select_cb(MenuLayer *ml, MenuIndex *cell_index, void *data) {
             break;
         case 4:
             // start
+            persist_write_data(PS_CURR_ROUND, (void*) &s_round, sizeof(RoundData));
+            window_stack_pop(false);
             score_entry_create(&s_round);
             break;
     }
@@ -134,10 +137,13 @@ static void setup_window_unload(Window *window) {
 
 void setup_init() {
     // TODO read cached round
-    s_round.ends = 12;
-    s_round.arrows_per_end = 3;
-    s_round.imperial = true;
-    strncpy(s_round.name, "Custom", 32);
+    persist_read_data(PS_CURR_ROUND, (void*) &s_round, sizeof(RoundData));
+    if (s_round.ends == 0){
+        s_round.ends = 12;
+        s_round.arrows_per_end = 3;
+        s_round.imperial = true;
+        strncpy(s_round.name, "Custom", 32);
+    }
 
     s_setup_window = window_create();
 

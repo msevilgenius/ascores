@@ -1,10 +1,15 @@
 #include "score_entry.h"
 #include "modules/storage.h"
 
+typedef struct{
+	uint8_t arrow_in_end;
+	uint8_t curr_end;
+}Progress;
+
 uint8_t *scores;
 uint8_t *end_scores;
-uint8_t arrow_in_end, curr_end;
-static RoundData *round_data;
+Progress progress;
+static RoundData round_data;
 
 
 static Window *score_entry_window;
@@ -67,13 +72,33 @@ static uint8_t score2dat(uint8_t score){
 static void update_progress_text() {
 	static char buf[28];
 	snprintf(buf, 28, "Arrow: %u/%u\nEnd: %u/%u",
-				arrow_in_end + 1, (round_data->arrows_per_end),
-				curr_end + 1, (round_data->ends));
+				progress.arrow_in_end + 1, (round_data.arrows_per_end),
+				progress.curr_end + 1, (round_data.ends));
     text_layer_set_text(progress_text_layer, buf);
 }
 
+static void save_progress() {
+	persist_write_data(PS_CURR_SCORES, (void*) scores,
+						progress.arrow_in_end * progress.curr_end);
+	persist_write_data(PS_CURR_PROGRESS, (void*) &progress, sizeof(Progress));
+}
+
+static void load_progress() {
+	APP_LOG(APP_LOG_LEVEL_INFO, "load prog called");
+	persist_read_data(PS_CURR_ROUND, (void*) &round_data, sizeof(RoundData));
+	APP_LOG(APP_LOG_LEVEL_INFO, "loaded curr round");
+	persist_read_data(PS_CURR_PROGRESS, (void*) &progress, sizeof(Progress));
+	APP_LOG(APP_LOG_LEVEL_INFO, "loaded progress");
+	APP_LOG(APP_LOG_LEVEL_INFO, "rd_ape: %u, p_ce: %u", round_data.arrows_per_end, progress.curr_end);
+	scores = malloc(sizeof(uint8_t) * round_data.ends * round_data.arrows_per_end);
+	APP_LOG(APP_LOG_LEVEL_INFO, "malloc'd scores");
+	persist_read_data(PS_CURR_SCORES, (void*) scores,
+						round_data.arrows_per_end * progress.curr_end);
+	APP_LOG(APP_LOG_LEVEL_INFO, "loaded curr scores");
+}
+
 static void update_current_score_entry_text() {
-	text_layer_set_text(num_entry_layer[arrow_in_end % 3], score2str(end_scores[arrow_in_end]));
+	text_layer_set_text(num_entry_layer[progress.arrow_in_end % 3], score2str(end_scores[progress.arrow_in_end]));
 }
 
 static void move_selection_box_animation_end(Animation *animation, bool finished, void *ctx) {
@@ -107,58 +132,59 @@ static void clear_score_entry_text() {
 }
 
 static void button_up_handler(ClickRecognizerRef recognizer, void *ctx) {
-	if (!round_data->imperial && end_scores[arrow_in_end] < 11){
-		end_scores[arrow_in_end] += 1;
-	}else if(end_scores[arrow_in_end] == 0){ // imperial && score = M
-		end_scores[arrow_in_end] = 1;
-	}else if(end_scores[arrow_in_end] < 8){ // imperial && score = [1357]
-		end_scores[arrow_in_end] += 2;
+	if (!round_data.imperial && end_scores[progress.arrow_in_end] < 11){
+		end_scores[progress.arrow_in_end] += 1;
+	}else if(end_scores[progress.arrow_in_end] == 0){ // imperial && score = M
+		end_scores[progress.arrow_in_end] = 1;
+	}else if(end_scores[progress.arrow_in_end] < 8){ // imperial && score = [1357]
+		end_scores[progress.arrow_in_end] += 2;
 	}
 	update_current_score_entry_text();
 }
 
 static void button_dn_handler(ClickRecognizerRef recognizer, void *ctx) {
-	if (!round_data->imperial && end_scores[arrow_in_end] > 0){
-		end_scores[arrow_in_end] -= 1;
-	}else if(end_scores[arrow_in_end] > 2){ // imperial && score = [3579]
-		end_scores[arrow_in_end] -= 2;
-	}else if(end_scores[arrow_in_end] > 0){ // imperial && score = 1
-		end_scores[arrow_in_end] = 0;
+	if (!round_data.imperial && end_scores[progress.arrow_in_end] > 0){
+		end_scores[progress.arrow_in_end] -= 1;
+	}else if(end_scores[progress.arrow_in_end] > 2){ // imperial && score = [3579]
+		end_scores[progress.arrow_in_end] -= 2;
+	}else if(end_scores[progress.arrow_in_end] > 0){ // imperial && score = 1
+		end_scores[progress.arrow_in_end] = 0;
 	}
 	update_current_score_entry_text();
 }
 
 static void button_select_handler(ClickRecognizerRef recognizer, void *ctx) {
-	uint8_t prev_arrow_in_end = arrow_in_end;
-	if (++arrow_in_end >= round_data->arrows_per_end){
+	uint8_t prev_arrow_in_end = progress.arrow_in_end;
+	if (++progress.arrow_in_end >= round_data.arrows_per_end){
 		// finished end
-		arrow_in_end = 0;
+		progress.arrow_in_end = 0;
 		// TODO save scores to storage
 		// commit end scores and reset
-		for (uint8_t i = 0; i < round_data->arrows_per_end; ++i){
-			scores[ (curr_end*round_data->arrows_per_end) + i] = score2dat(end_scores[i]);
+		for (uint8_t i = 0; i < round_data.arrows_per_end; ++i){
+			scores[ (progress.curr_end*round_data.arrows_per_end) + i] = score2dat(end_scores[i]);
 			end_scores[i] = 0x80;
 		}
-		if (++curr_end >= round_data->ends){
+		if (++progress.curr_end >= round_data.ends){
 			// finished shoot
 			// TODO send score to phone, close scoresheet, etc. otherwise this can crash
 		}else{
 			// starting next end, set first score to highest
 			// FUTURE_TODO set to ave. first arrow?
-			end_scores[0] = round_data->imperial ? 9 : 10;
+			end_scores[0] = round_data.imperial ? 9 : 10;
 			clear_score_entry_text();
 			update_current_score_entry_text();
 		}
+		save_progress();
 	}else{ // just move on to next arrow
 		// set next score to prev score (as it should only ever by <= to it)
-		end_scores[arrow_in_end] = end_scores[arrow_in_end - 1];
-		if (arrow_in_end % 3 == 0){
+		end_scores[progress.arrow_in_end] = end_scores[progress.arrow_in_end - 1];
+		if (progress.arrow_in_end % 3 == 0){
 			clear_score_entry_text();
 		}
 		update_current_score_entry_text();
 	}
 	update_progress_text();
-	move_selection_box_animated(prev_arrow_in_end % 3, arrow_in_end % 3);
+	move_selection_box_animated(prev_arrow_in_end % 3, progress.arrow_in_end % 3);
 }
 
 static void config_provider(Window *window) {
@@ -257,19 +283,20 @@ static void window_unload(Window* window) {
 	 gbitmap_destroy(box_o_img);
 	 
 	 layer_destroy(selection_layer);
-	 
+	 score_entry_destroy();
 }
 
 void score_entry_create (RoundData *round) {
-	// TODO going back, then changing a setting, then going back and then resuming could fuck up the round data?
-	round_data = round;
-	// save round to storage
-	scores = malloc(sizeof(uint8_t) * round_data->ends * round_data->arrows_per_end);
-	end_scores = malloc(sizeof(uint8_t) * round_data->arrows_per_end);
-	arrow_in_end = 0;
-	curr_end = 0;
-	end_scores[0] = round_data->imperial ? 9 : 10;
-	for (uint8_t i = 1; i < round_data->arrows_per_end; ++i){
+	memcpy(&round_data, round, sizeof(RoundData));
+	// reset stored progress to prevent incorrect resuming
+	persist_delete(PS_CURR_PROGRESS);
+	persist_delete(PS_CURR_SCORES);
+	scores = malloc(sizeof(uint8_t) * round_data.ends * round_data.arrows_per_end);
+	end_scores = malloc(sizeof(uint8_t) * round_data.arrows_per_end);
+	progress.arrow_in_end = 0;
+	progress.curr_end = 0;
+	end_scores[0] = round_data.imperial ? 9 : 10;
+	for (uint8_t i = 1; i < round_data.arrows_per_end; ++i){
 		end_scores[i] = 0x80;
 	}
 	
@@ -285,9 +312,21 @@ void score_entry_create (RoundData *round) {
 }
 
 void score_entry_resume() {
-	// load round from storage
+	APP_LOG(APP_LOG_LEVEL_INFO, "resume called");
+	load_progress();
+	APP_LOG(APP_LOG_LEVEL_INFO, "loaded prog");
+	progress.arrow_in_end = 0;
+	APP_LOG(APP_LOG_LEVEL_INFO, "reset arrow_in_end");
+	end_scores = malloc(sizeof(uint8_t) * round_data.arrows_per_end);
+	APP_LOG(APP_LOG_LEVEL_INFO, "malloc'd end scores");
+	end_scores[0] = round_data.imperial ? 9 : 10;
+	for (uint8_t i = 1; i < round_data.arrows_per_end; ++i){
+		end_scores[i] = 0x80;
+	}
+	APP_LOG(APP_LOG_LEVEL_INFO, "init'd end scores");
 	
 	score_entry_window = window_create();
+	APP_LOG(APP_LOG_LEVEL_INFO, "created window");
 
     window_set_window_handlers(score_entry_window, (WindowHandlers) {
         .load = window_load,
