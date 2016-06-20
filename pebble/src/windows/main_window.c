@@ -40,7 +40,6 @@ static void menu_select_cb(MenuLayer *ml, MenuIndex *cell_index, void *data) {
     switch (row){
         case 0:
             // resume - to score_entry (resume)
-            APP_LOG(APP_LOG_LEVEL_INFO, "resume clicked");
             score_entry_resume();
             break;
         case 1:

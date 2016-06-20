@@ -8,7 +8,9 @@
 
 
 static void init() {
-	storage_init(false);
+	if (storage_init(false)){ // if firstrun
+	}
+	init_rounds(true);
 	main_init();
 }
 

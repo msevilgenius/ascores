@@ -69,6 +69,11 @@
                     "file": "images/tick_16.png",
                     "type": "bitmap",
                     "name": "IMG_TICK_16"
+                },
+                {
+                    "file": "default_rounds.bin",
+                    "type": "raw",
+                    "name": "DEFAULT_ROUNDS"
                 }
             ]
         },

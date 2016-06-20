@@ -33,6 +33,12 @@ static void set_round_ape(uint16_t num, void *arg) {
     menu_layer_reload_data(s_menu_layer);
 }
 
+static void set_round(RoundData round){
+    s_round = round;
+    rsel_deinit();
+    menu_layer_reload_data(s_menu_layer);
+}
+
 static uint16_t menu_get_num_sections_cb(MenuLayer *ml, void *data) {
     return 1;
 }
@@ -77,6 +83,8 @@ static void menu_select_cb(MenuLayer *ml, MenuIndex *cell_index, void *data) {
     switch (cell_index->row){
         case 0:
             // Round
+            APP_LOG(APP_LOG_LEVEL_DEBUG, "calling rsel_init");
+            rsel_init(set_round);
             break;
         case 1:
             // ApE
