@@ -8,6 +8,7 @@ static StatusBarLayer *status_bar;
 
 static uint32_t round_count;
 static uint32_t *rounds_table;
+static RoundData *rounds_cache;
 static round_set_cb r_select_cb;
 
 static uint16_t menu_get_num_sections_cb(MenuLayer *ml, void *data) {
@@ -23,24 +24,21 @@ static uint16_t menu_get_num_rows_cb(MenuLayer *ml, uint16_t section, void *data
 // if none in storage show message to say 'get predefined rounds from app'
  
 static void menu_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
-	RoundData round;
-	persist_read_data(rounds_table[cell_index->row], (void*) &round, sizeof(RoundData));
+
 	char doz_str[4];
-	uint8_t arrows = round.arrows_per_end * round.ends;
+	uint8_t arrows = rounds_cache[cell_index->row].arrows_per_end * rounds_cache[cell_index->row].ends;
 	uint8_t doz = arrows / 12;
 	if (arrows % 12 == 0){
 		snprintf(doz_str, 4, "%u", doz);
 	}else{
 		snprintf(doz_str, 4, "%u.5", doz);
 	}
-	menu_cell_basic_draw(ctx, cell_layer, round.name, doz_str, NULL);
+	menu_cell_basic_draw(ctx, cell_layer, rounds_cache[cell_index->row].name, doz_str, NULL);
 }
 
 static void menu_select_cb(MenuLayer *ml, MenuIndex *cell_index, void *data) {
-	RoundData round;
-	persist_read_data(rounds_table[cell_index->row], (void*) &round, sizeof(RoundData));
 	window_stack_pop(true);
-	r_select_cb(round);
+	r_select_cb(rounds_cache[cell_index->row]);
 }
 
 static void rsel_window_load(Window *window) {
@@ -67,11 +65,17 @@ static void rsel_window_load(Window *window) {
 	round_count = persist_get_size(PS_ROUNDS_TABLE) / sizeof(uint32_t);
 	rounds_table = malloc(sizeof(uint32_t) * round_count);
 	persist_read_data(PS_ROUNDS_TABLE, (void*) rounds_table, sizeof(uint32_t) * round_count);
+	rounds_cache = malloc(sizeof(RoundData) * round_count);
+	for (size_t i = 0; i < round_count; ++i){
+		persist_read_data(rounds_table[i], (void*) &(rounds_cache[i]), sizeof(RoundData));
+	}
+	
     menu_layer_reload_data(s_menu_layer);
 }
 
 static void rsel_window_unload(Window *window) {
 	free(rounds_table);
+	free(rounds_cache);
 	menu_layer_destroy(s_menu_layer);
 	status_bar_layer_destroy(status_bar);
 }
