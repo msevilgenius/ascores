@@ -30,7 +30,7 @@ static void update_progress_text() {
 	snprintf(progress_text, 28, "Arrow: %u/%u\nEnd: %u/%u",
 				progress.arrow_in_end + 1, (round_data.arrows_per_end),
 				progress.curr_end + 1, (round_data.ends));
-    text_layer_set_text(progress_text_layer, progress_text);
+	text_layer_set_text(progress_text_layer, progress_text);
 }
 
 static void save_progress() {
@@ -149,9 +149,9 @@ static void button_select_handler(ClickRecognizerRef recognizer, void *ctx) {
 }
 
 static void config_provider(Window *window) {
-    window_single_repeating_click_subscribe(BUTTON_ID_UP, 150, button_up_handler);
-    window_single_repeating_click_subscribe(BUTTON_ID_DOWN, 150, button_dn_handler);
-    window_single_click_subscribe(BUTTON_ID_SELECT, button_select_handler);
+	window_single_repeating_click_subscribe(BUTTON_ID_UP, 150, button_up_handler);
+	window_single_repeating_click_subscribe(BUTTON_ID_DOWN, 150, button_dn_handler);
+	window_single_click_subscribe(BUTTON_ID_SELECT, button_select_handler);
 }
 
 static void selection_layer_update_proc(Layer *layer, GContext *ctx) {
@@ -171,7 +171,7 @@ static void selection_layer_update_proc(Layer *layer, GContext *ctx) {
 
 static void window_load(Window* window) {
 	Layer *window_layer = window_get_root_layer(window);
-    GRect bounds = layer_get_bounds(window_layer);
+	GRect bounds = layer_get_bounds(window_layer);
 
 	entry_bg_img = gbitmap_create_with_resource(RESOURCE_ID_IMG_SCORE_BG);
 	entry_bg_layer = bitmap_layer_create(GRect(12, 104, 120, 38));
@@ -179,7 +179,7 @@ static void window_load(Window* window) {
 	bitmap_layer_set_compositing_mode(entry_bg_layer, GCompOpSet);
 	bitmap_layer_set_bitmap(entry_bg_layer, entry_bg_img);
 
-    layer_add_child(window_layer, bitmap_layer_get_layer(entry_bg_layer));
+	layer_add_child(window_layer, bitmap_layer_get_layer(entry_bg_layer));
 	
 	arrow_up_img = gbitmap_create_with_resource(RESOURCE_ID_IMG_ARROW_UP);
 	arrow_down_img = gbitmap_create_with_resource(RESOURCE_ID_IMG_ARROW_DN);
@@ -192,31 +192,31 @@ static void window_load(Window* window) {
 	layer_add_child(window_layer, selection_layer);
 
 	for (uint8_t i = 0; i < 3; ++i){
-	    num_entry_layer[i] = text_layer_create(
-	        GRect((12+i*41), 104, 38, 38));
+		num_entry_layer[i] = text_layer_create(
+			GRect((12+i*41), 104, 38, 38));
 	
-	    text_layer_set_background_color(num_entry_layer[i], GColorClear);
-	    text_layer_set_text_color(num_entry_layer[i], GColorBlack);
-	    text_layer_set_font(num_entry_layer[i], fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
-	    text_layer_set_text_alignment(num_entry_layer[i], GTextAlignmentCenter);
+		text_layer_set_background_color(num_entry_layer[i], GColorClear);
+		text_layer_set_text_color(num_entry_layer[i], GColorBlack);
+		text_layer_set_font(num_entry_layer[i], fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
+		text_layer_set_text_alignment(num_entry_layer[i], GTextAlignmentCenter);
 	
-	    layer_add_child(window_layer, text_layer_get_layer(num_entry_layer[i]));
+		layer_add_child(window_layer, text_layer_get_layer(num_entry_layer[i]));
 	}
 
-    progress_text_layer = text_layer_create(
-        GRect(10, PBL_IF_ROUND_ELSE(20, 16), bounds.size.w - 20, 48));
+	progress_text_layer = text_layer_create(
+		GRect(10, PBL_IF_ROUND_ELSE(20, 16), bounds.size.w - 20, 48));
 
-    text_layer_set_background_color(progress_text_layer, GColorClear);
-    text_layer_set_text_color(progress_text_layer, GColorBlack);
-    text_layer_set_font(progress_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18));
-    text_layer_set_text_alignment(progress_text_layer,
+	text_layer_set_background_color(progress_text_layer, GColorClear);
+	text_layer_set_text_color(progress_text_layer, GColorBlack);
+	text_layer_set_font(progress_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18));
+	text_layer_set_text_alignment(progress_text_layer,
 		PBL_IF_ROUND_ELSE(GTextAlignmentCenter, GTextAlignmentRight));
-    update_progress_text();
+	update_progress_text();
 
-    layer_add_child(window_layer, text_layer_get_layer(progress_text_layer));
+	layer_add_child(window_layer, text_layer_get_layer(progress_text_layer));
 	
-    status_bar = status_bar_layer_create();
-    layer_add_child(window_layer, status_bar_layer_get_layer(status_bar));
+	status_bar = status_bar_layer_create();
+	layer_add_child(window_layer, status_bar_layer_get_layer(status_bar));
 	
 	
 	window_set_click_config_provider(score_entry_window, (ClickConfigProvider) config_provider);
@@ -263,12 +263,12 @@ void score_entry_create (RoundData *round) {
 	
 	score_entry_window = window_create();
 
-    window_set_window_handlers(score_entry_window, (WindowHandlers) {
-        .load = window_load,
-        .unload = window_unload
-    });
+	window_set_window_handlers(score_entry_window, (WindowHandlers) {
+		.load = window_load,
+		.unload = window_unload
+	});
 
-    window_stack_push(score_entry_window, true);
+	window_stack_push(score_entry_window, true);
 
 }
 
@@ -289,12 +289,12 @@ void score_entry_resume() {
 	score_entry_window = window_create();
 	APP_LOG(APP_LOG_LEVEL_INFO, "created window");
 
-    window_set_window_handlers(score_entry_window, (WindowHandlers) {
-        .load = window_load,
-        .unload = window_unload
-    });
+	window_set_window_handlers(score_entry_window, (WindowHandlers) {
+		.load = window_load,
+		.unload = window_unload
+	});
 
-    window_stack_push(score_entry_window, true);
+	window_stack_push(score_entry_window, true);
 }
 
 void score_entry_destroy() {

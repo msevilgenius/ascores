@@ -70,7 +70,7 @@ static void rsel_window_load(Window *window) {
 		persist_read_data(rounds_table[i], (void*) &(rounds_cache[i]), sizeof(RoundData));
 	}
 	
-    menu_layer_reload_data(s_menu_layer);
+	menu_layer_reload_data(s_menu_layer);
 }
 
 static void rsel_window_unload(Window *window) {
