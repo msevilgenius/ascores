@@ -22,7 +22,7 @@ static uint8_t max_ends() {
 
 static void set_round_ends(uint16_t num, void *arg) {
     s_round.ends = num;
-    s_round.name = "Custom";
+	memcpy(s_round.name, "Custom", 7);
     menu_layer_reload_data(s_menu_layer);
 }
 
@@ -31,7 +31,7 @@ static void set_round_ape(uint16_t num, void *arg) {
     if (s_round.ends > max_ends()){
         s_round.ends = max_ends();
     }
-    s_round.name = "Custom";
+	memcpy(s_round.name, "Custom", 7);
     menu_layer_reload_data(s_menu_layer);
 }
 
@@ -104,7 +104,7 @@ static void menu_select_cb(MenuLayer *ml, MenuIndex *cell_index, void *data) {
             // Scoring Zones
             // toggle between 5- and 10-zone
             s_round.imperial = !s_round.imperial;
-            s_round.name = "Custom";
+            memcpy(s_round.name, "Custom", 7);
             menu_layer_reload_data(ml);
             break;
         case 4:
