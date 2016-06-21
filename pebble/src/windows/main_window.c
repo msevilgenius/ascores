@@ -3,6 +3,7 @@
 #include "score_entry.h"
 #include "strings.h"
 #include "modules/storage.h"
+#include "score_view.h"
 
 static Window *s_main_window;
 static MenuLayer *s_menu_layer;

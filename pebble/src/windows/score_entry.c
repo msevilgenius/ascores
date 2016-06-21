@@ -1,5 +1,6 @@
 #include "score_entry.h"
 #include "modules/storage.h"
+#include "score_view.h"
 
 typedef struct{
 	uint8_t arrow_in_end;
@@ -23,58 +24,13 @@ static Layer *selection_layer;
 static GBitmap *arrow_up_img, *arrow_down_img,
 			   *arrow_up_o_img, *arrow_down_o_img,
 			   *box_o_img;
-
-static const char* score2str(uint8_t score) {
-	switch (score){
-		case 0:
-			return "M";
-		case 1:
-			return "1";
-		case 2:
-			return "2";
-		case 3:
-			return "3";
-		case 4:
-			return "4";
-		case 5:
-			return "5";
-		case 6:
-			return "6";
-		case 7:
-			return "7";
-		case 8:
-			return "8";
-		case 9:
-			return "9";
-		case 10:
-			return "10";
-		case 11:
-			return "X";
-		default:
-			return "-";
-	}
-}
-/* why would you turn on -Werror
-static uint8_t dat2score(uint8_t dat){
-	if (dat == (10 & 0b10000000)){
-		return 11;
-	}
-	return dat;
-}
-*/
-static uint8_t score2dat(uint8_t score){
-	if (score == 11){
-		return 10 & 0b10000000;
-	}
-	return score;
-}
+static char progress_text[28];
 
 static void update_progress_text() {
-	static char buf[28];
-	snprintf(buf, 28, "Arrow: %u/%u\nEnd: %u/%u",
+	snprintf(progress_text, 28, "Arrow: %u/%u\nEnd: %u/%u",
 				progress.arrow_in_end + 1, (round_data.arrows_per_end),
 				progress.curr_end + 1, (round_data.ends));
-    text_layer_set_text(progress_text_layer, buf);
+    text_layer_set_text(progress_text_layer, progress_text);
 }
 
 static void save_progress() {
@@ -167,14 +123,18 @@ static void button_select_handler(ClickRecognizerRef recognizer, void *ctx) {
 		if (++progress.curr_end >= round_data.ends){
 			// finished shoot
 			// TODO send score to phone, close scoresheet, etc. otherwise this can crash
+			save_progress();
+			APP_LOG(APP_LOG_LEVEL_DEBUG, "showing scores");
+			score_view_create(&round_data, scores);
+			return;
 		}else{
 			// starting next end, set first score to highest
 			// FUTURE_TODO set to ave. first arrow?
 			end_scores[0] = round_data.imperial ? 9 : 10;
 			clear_score_entry_text();
 			update_current_score_entry_text();
+			save_progress();
 		}
-		save_progress();
 	}else{ // just move on to next arrow
 		// set next score to prev score (as it should only ever by <= to it)
 		end_scores[progress.arrow_in_end] = end_scores[progress.arrow_in_end - 1];
