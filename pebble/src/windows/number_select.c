@@ -15,12 +15,12 @@ static const char *s_title;
 static uint16_t number;
 static uint16_t num_min;
 static uint16_t num_max;
+static char num_text[5];
 
 void update_number_display() {
-    static char buf[5];
-    snprintf(buf, 5, "%d", number);
-    text_layer_set_text(text_number, buf);
-    APP_LOG(APP_LOG_LEVEL_INFO, "update display to %s", buf);
+    snprintf(num_text, 5, "%d", number);
+    text_layer_set_text(text_number, num_text);
+    APP_LOG(APP_LOG_LEVEL_INFO, "update display to %s", num_text);
 }
     
 void button_up_handler(ClickRecognizerRef recognizer, void *ctx) {
