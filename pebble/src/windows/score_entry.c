@@ -122,8 +122,9 @@ static void button_select_handler(ClickRecognizerRef recognizer, void *ctx) {
 		}
 		if (++progress.curr_end >= round_data.ends){
 			// finished shoot
-			// TODO send score to phone, close scoresheet, etc. otherwise this can crash
+			// TODO send score to phone, close scoresheet, make unresumeable, etc. otherwise this can crash
 			save_progress();
+			window_stack_pop(false);
 			APP_LOG(APP_LOG_LEVEL_DEBUG, "showing scores");
 			score_view_create(&round_data, scores);
 			return;
