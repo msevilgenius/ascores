@@ -29,9 +29,9 @@ static void menu_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *
 	uint8_t arrows = rounds_cache[cell_index->row].arrows_per_end * rounds_cache[cell_index->row].ends;
 	uint8_t doz = arrows / 12;
 	if (arrows % 12 == 0){
-		snprintf(doz_str, 4, "%u", doz);
+		snprintf(doz_str, 4, "%u dozen", doz);
 	}else{
-		snprintf(doz_str, 4, "%u.5", doz);
+		snprintf(doz_str, 4, "%u.5 dozen", doz);
 	}
 	menu_cell_basic_draw(ctx, cell_layer, rounds_cache[cell_index->row].name, doz_str, NULL);
 }
