@@ -32,7 +32,7 @@ const char* score2str(uint8_t score) {
 }
 
 uint8_t dat2score(uint8_t dat){
-	if (dat == (10 & 0b10000000)){
+	if (dat == (10 | 0b10000000)){
 		return 11;
 	}
 	return dat;
@@ -40,7 +40,7 @@ uint8_t dat2score(uint8_t dat){
 
 uint8_t score2dat(uint8_t score){
 	if (score == 11){
-		return 10 & 0b10000000;
+		return 10 | 0b10000000;
 	}
 	return score;
 }
