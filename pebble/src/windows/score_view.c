@@ -34,7 +34,7 @@ static void calc_values() {
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "calcing end %u", end);
 		end_total = 0;
 		for (uint8_t arrow = 0; arrow < s_round->arrows_per_end; ++arrow){
-			arrow_score = s_scores[end * arrow] & 0x7F;
+			arrow_score = s_scores[end * s_round->arrows_per_end + arrow] & 0x7F;
 			APP_LOG(APP_LOG_LEVEL_DEBUG, "arrow: %u", arrow_score);
 			end_total += arrow_score;
 			if (arrow_score > 9) { ++s_golds; }
